@@ -1,14 +1,19 @@
-import Image from "next/image";
-import { ArrowUpIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { auth } from "@clerk/nextjs/server";
+import { UserButton, Show, SignInButton } from "@clerk/nextjs";
+import { Suspense } from "react";
+import HomePage from "@/components/home";
 
-export default function Home() {
+export default async function Home() {
+  await auth.protect();
   return (
-    <div className="flex flex-wrap items-center gap-2 md:flex-row">
-      <Button variant="outline">Button</Button>
-      <Button variant="outline" size="icon" aria-label="Submit">
-        <ArrowUpIcon />
-      </Button>
-    </div>
+    <Suspense>
+      <Show when="signed-in">
+        <UserButton />
+      </Show>
+      <Show when="signed-out">
+        <SignInButton />
+      </Show>
+      <HomePage />
+    </Suspense>
   );
 }
